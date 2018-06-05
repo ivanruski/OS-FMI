@@ -1,0 +1,39 @@
+Description of files 61909A.sh and 61909B.sh
+
+ -- 61909A.sh
+
+To solve "A" I am using associative arrays: https://www.artificialworlds.net/blog/2012/10/17/bash-associative-array-examples/ 
+
+The idea is that I am reading from file called "morse" and inserting into the array key-value pairs (.--. -> e)
+
+Then in while loop I am iterating through the file "secret_message" and for every morse character I write the corresponding alhabetic letter to temporary file called morse_to_char.txt.
+
+Since the result in the while loop gives me a file with every character on new line I need to merge them in single line. For this purpose I am using awk: http://www.grymoire.com/Unix/Awk.html
+
+The only thing that's left is to turn every uppercase character into lowwer case. For this reason I am using "sed" command where:
+ "-r" is used in oreder to type () regex groups without escaping like this \(....\)
+ "-i" is to apply the result on the same file
+ "-e" is to indicate that the following text is sed command in this case I am using the substitute comand.
+More on sed here: http://www.grymoire.com/Unix/Sed.html 
+
+Finally I am deleting temporary created file morse_to_char.txt
+
+ -- 61909B.sh
+
+In "B" file again associative arrays are helping me a lot in order the solve the problem as well as and string manipulation.
+https://www.tldp.org/LDP/abs/html/string-manipulation.html
+
+To solve the problem I have to associative arrays.
+First called "letter_to_key" is to map letter at its real index in the alphabet to a letter shifted several index i.e. letter 'a' is at index 0 and we have shiftIndex=4 then we will have [ a->d, b->e etc ].
+Second array is the opposite of the first. ([d->a, e->b etc])  
+
+I have ot functions: https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php
+
+"change_key" function is used to populate the two arrays. The function accepts one argument which is a  number and is used to callculate the index of the letters which will be used for the encrypted message 
+
+"encrypt_cipher_keyword" function accepts one argument which is a word. This function encrypts the keyword with which I will be serching in the encrypted message. The function returns new word where every letter from the original word is replaced with other letter. Depending on the shift_index used in the previous function every word passed here have 26 possiblities of encryption.
+
+The main part of the solution here is in the for loop, where I am populating the two arrays for every possible shiftIndex and then I am encrypting the keyword.
+If the encrypted keyword is found in the encrypted file, then I know the exact shiftIndex and I can decrypt the secret message
+
+Process substitution, arithmetic operations,loops, ifs are from presentations in the course fmi/course/view.php=4076
