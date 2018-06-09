@@ -1,0 +1,91 @@
+Documentation
+###### Problem 1 ######
+   Did a quick research about what to use in order to download a web content - found "wget"
+
+ - All the arguments I needed about wget I found in the man page exept"--spider" https://stackoverflow.com/a/29858816/7364951
+
+ The first "if" statement is checking whether the passed parameters are 2 if not exits the script 
+
+ The second "if" statement is checking whether such directory exists if not exits the scritp
+
+ The third "if" statement is doing someting like "ping" in order to check whether such web site exists if not exits the script
+
+ The main line is the last one where the conctent from the website is being downloaded
+
+ -r is for recursive in order to go into the folder(page) and download all the reports 
+
+ -nv is for no-verbose which is something like quite expect that prints the error messages
+
+ --show-progress - is for showing the progress of every file 
+
+ -P is to tell wget where to download the files
+
+ --cut-dirs:
+
+ No options -> ftp.xemacs.org/pub/xemacs/
+   -nH               -> pub/xemacs/
+   -nH --cut-dirs=1  -> xemacs/
+   -nH --cut-dirs=2  -> .
+   --cut-dirs=1      -> ftp.xemacs.org/xemacs/
+
+###### END #####
+
+
+##### Problem 2 ######
+
+ --- participants ---
+ In the function I am going through all the files in the given directory and if a certain file has line which is starting with "CALLSIGN" I consider it as a valid report file and the file name which is equal to the CALLSIGN is printed to the standart output
+
+
+ --- outliers ---
+ In the begining of the function I have to associative arrays.
+
+ The first called "map" is for the participants which have report files. I consider a participant with report file as a valid participant
+
+ The second called "result" is for the participants which doesn't have a report file
+
+ My idea is to go through every file and from every file to read the 9th column. If the 9th column is not present in the "map" array it is added to the "result" array with value "1" in this way I can avoid duplicates.
+
+ At the end the result array is being printed
+
+ In order to see whether element is present in array, I found help in this answer https://stackoverflow.com/a/13221491/7364951
+
+
+ --- unique --- 
+ There is an associative array which has key - participant name and value - how many times it is encountered in the report files(9th col)
+
+ At the end all the keys with value less than or equal to 3 are printed to the standart output
+
+
+ --- cross_check ---
+ Here again there are two nested while loops. Outside loop is for going through all the files in the given directroy, and the inner is to go through all the lines. The logic of my solution is happaning in the inner loop. 
+ First from every line I am extracting the value in the 9th column. Then I have "if" statement with 3 conditions.
+   - Fisrt the extracted value must not be an empty string.
+   - Second there must be a file with the name of the 9th column
+   - Third I do the cross_check using grep if grep fails to find (basename of log_file) then print the log_line
+
+
+ --- bonus ---
+
+ For the bonus problem there are 3 nested while loops(not the best solution/performance)
+   1st loop is going through all the files in the given directory
+   2nd loop is going through all the lines in every file from the 1st loop
+   3th loop is going through all the lines in a file that is /directory/9th column from file in the 2nd loop
+  
+ Tha main logic is happeing in the most inner while loop.
+  if the CALLSIGN from the second loop is not present in the file that is being traversed in the 3rd loop print ( that is the same as cross_check)
+
+  else
+   - Try to grep the line that cross_check occurrs. If the line is "grepped" successfully:
+
+   - For every file that is being traversed the 4th and 5th column is being converted in secondes since 1970( I find this approach the easiest for copmaring dates)
+   - After I have the 4th and 5th column in seconds I can create the time range - for lower time range I substract 180(3 minutes) and for upper I add 180
+
+   - I am also converting the date and time from the grepped line and I am checking:
+   
+      if the lower range time is greater than grepped line time this satisfies the condition and the line from original file is printed
+      if the upper range time is less than grepped line time this also satisfies the condition and the line from original file si printed
+
+How to parse string to date time I have used this - https://stackoverflow.com/questions/8116503/how-to-compare-two-datetime-strings-and-return-difference-in-hours-bash-shell 
+
++%s is to convert the time into seconds since 1970 

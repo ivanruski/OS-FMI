@@ -1,0 +1,29 @@
+
+- The main function of my solution to the problem is "find_word" which works as a standart binary search function. 
+ 
+ First is calculated the byte at which I should start reading the given dictionary.dat file. 
+ For calculating the middle value of two numbers I have used this resource 
+https://ai.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html
+
+- After that a method "get_next_word_cords" is called. 
+ 
+ The idea of the method is to find the first "dictionary word(word with description)". 
+ In the method lseek is set to the callculated middle value(byte) of the file, then I am reading the file backwards while I reach "0x00" byte or while I reach the left boundary.
+ The need for the left or right boundary is because I am reading the file backwards and may happen that I am reading the same word over and over again forever.
+ When 0x00 byte is reached the start and end bytes of the word is calculated
+ "the start" of the word is at position 0x00 byte + 1
+ "the end" of the word is at position 0x0a byte -1
+ or -1 is return when left bondary is reached i.e. there is no such word
+
+- After "get_next_word_cords" is finished if the return value is 0, the found word is compared to the word searched (argv[2])
+  
+  The method comparing the two words is "compare_words".
+  The method return values are:
+  0 - if the words are equal
+  1 - if argv[2] is after than the current word
+  -1 - if argv[2] is before than the current word
+ 
+- When there is match the method "print_description" is called
+  lseek is set to the end-byte of the found word + 1 and file and the file is being read until 0x00 byte.
+  
+- If argv[2] is not present in the file "Word was not found is printed to the STDOUT"
