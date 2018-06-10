@@ -1,4 +1,3 @@
-//
 #include <err.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -35,7 +34,6 @@ int get_next_word_cords(int fd,
        lseek(fd,file_pos,SEEK_SET);
    }
 
-   close(fd);
    return -1;
 }
 
@@ -48,16 +46,19 @@ int compare_words(int fd, struct coordinates *wcoords, char *match) {
    if (read(fd,&found,fsize) != fsize){
        return -1;
    }
-   
+  
    int msize = strlen(match);  
    int limit = msize > fsize ? fsize : msize;
    for (int i = 0; i< limit; i++) {
-       if (match[i] == found[i])
+       if (match[i] == found[i]){
            continue;
-       else if (match[i] > found[i])
+       }
+       else if (match[i] > found[i]) {
            return 1;
-       else
+       }
+       else{
            return -1;
+       }
    }
    
    if (msize > fsize)
@@ -76,10 +77,12 @@ int find_word(int fd,
    
    if (l > r) 
        return -1;
-   
-   uint32_t file_pos = l + ((r-l)/2);
+
+   uint32_t file_pos = (r+ l) / 2;  
    if (get_next_word_cords(fd, l, file_pos, wcoords) == -1) {
-       return -1;
+      // if "l" boundary is encountered 
+      // run for the right subset
+      return find_word(fd, file_pos+1, r, wcoords, match);
    }
    
    int result = compare_words(fd, wcoords,match);
@@ -87,10 +90,10 @@ int find_word(int fd,
        return 0;
    }
    else if(result == 1) {
-      return find_word(fd,wcoords->end, r, wcoords, match); 
+      return find_word(fd,file_pos + 1, r, wcoords, match); 
    }
    else {
-      return find_word(fd,l, wcoords->begin, wcoords, match);
+      return find_word(fd,l, file_pos - 1, wcoords, match);
    }
 }
 
